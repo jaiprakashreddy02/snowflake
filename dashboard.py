@@ -2,11 +2,10 @@ import streamlit as st
 import pandas as pd
 import snowflake.connector
 
-# Page settings
 st.set_page_config(page_title="Student Dashboard", layout="wide")
 st.title("🎓 Student Data Analytics")
 
-# Fetch credentials securely from secrets.toml
+# Use credentials securely from secrets.toml
 user = st.secrets["SNOWFLAKE_USER"]
 password = st.secrets["SNOWFLAKE_PASSWORD"]
 account = st.secrets["SNOWFLAKE_ACCOUNT"]
@@ -14,7 +13,7 @@ warehouse = st.secrets["SNOWFLAKE_WAREHOUSE"]
 database = st.secrets["SNOWFLAKE_DATABASE"]
 schema = st.secrets["SNOWFLAKE_SCHEMA"]
 
-# Attempt to connect to Snowflake
+# Attempt connection
 try:
     conn = snowflake.connector.connect(
         user=user,
@@ -53,19 +52,3 @@ countries = pd.read_sql("SELECT DISTINCT Country FROM cleaned_data", conn)["Coun
 selected = st.selectbox("Select Country", countries)
 filtered = pd.read_sql(f"SELECT * FROM cleaned_data WHERE Country = '{selected}'", conn)
 st.dataframe(filtered)
-
-# ---------------- Download Button ---------------- #
-st.download_button(
-    label="📥 Download Filtered Data as CSV",
-    data=filtered.to_csv(index=False),
-    file_name="filtered_students.csv",
-    mime="text/csv"
-)
-
-# ---------------- Refresh Button ---------------- #
-if st.button("🔄 Refresh Dashboard"):
-    st.experimental_rerun()
-
-# ---------------- Footer ---------------- #
-st.markdown("---")
-st.markdown("🚀 Built with Streamlit | 🧊 Powered by Snowflake | 🎓 Capstone Project 2025")
