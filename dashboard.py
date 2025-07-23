@@ -5,28 +5,15 @@ import snowflake.connector
 st.set_page_config(page_title="Student Dashboard", layout="wide")
 st.title("🎓 Student Data Analytics")
 
-# Use credentials securely from secrets.toml
-user = st.secrets["SNOWFLAKE_USER"]
-password = st.secrets["SNOWFLAKE_PASSWORD"]
-account = st.secrets["SNOWFLAKE_ACCOUNT"]
-warehouse = st.secrets["SNOWFLAKE_WAREHOUSE"]
-database = st.secrets["SNOWFLAKE_DATABASE"]
-schema = st.secrets["SNOWFLAKE_SCHEMA"]
-
-# Attempt connection
-try:
-    conn = snowflake.connector.connect(
-        user=user,
-        password=password,
-        account=account,
-        warehouse=warehouse,
-        database=database,
-        schema=schema
-    )
-    st.success("✅ Connected to Snowflake!")
-except Exception as e:
-    st.error(f"❌ Connection failed: {e}")
-    st.stop()
+# Connect to Snowflake
+conn = snowflake.connector.connect(
+    user=st.secrets["SNOWFLAKE_USER"],
+    password=st.secrets["SNOWFLAKE_PASSWORD"],
+    account=st.secrets["SNOWFLAKE_ACCOUNT"],
+    warehouse=st.secrets["SNOWFLAKE_WAREHOUSE"],
+    database=st.secrets["SNOWFLAKE_DATABASE"],
+    schema=st.secrets["SNOWFLAKE_SCHEMA"]
+)
 
 # GPA by Major
 query1 = "SELECT Major, ROUND(AVG(GPA), 2) AS avg_gpa FROM cleaned_data GROUP BY Major ORDER BY avg_gpa DESC"
